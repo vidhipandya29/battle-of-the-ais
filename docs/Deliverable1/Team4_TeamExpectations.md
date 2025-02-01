@@ -25,7 +25,7 @@ These define what group members expect from one another and what norms they agre
 | **Meetings** | - Weekly Meetings (Saturday, 10am) on Zoom  <br> - Collaborate on Google Docs for sharing and organizing ideas  <br> - Be punctual and attend meetings  <br> - Create action items at the end of each meeting |
 | **Deadlines** | - Complete tasks before the deadline  <br> - If circumstances result in potential delay, communicate this to other members |
 
-| Care Statement |
+**Care Statement**
 | Outline here how the team will strive to care for the health of each other and the team as a whole during the project duration: |
 |-----------------------------------------------|
 | - Communicate workloads to accommodate and help in distribution |
