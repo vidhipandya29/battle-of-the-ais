@@ -67,6 +67,7 @@ pip install -r requirements.txt
     
 *   **Reset:** Restarts the simulation.
     
+---
 
 ## **§C. Limitations and Planned Improvements**
 
