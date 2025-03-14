@@ -154,13 +154,30 @@ class StatsElement(TextElement):
     def render(self, model):
         return f"<b>Infected Users:</b> {sum([1 for a in model.schedule.agents if a.infected])} / {model.num_agents} " \
                f"<b>| Labeled Content:</b> {sum([1 for a in model.schedule.agents if a.labeled])}"
+class ChartLabels(TextElement):
+    """Properly position X and Y-axis labels closer to the graph."""
+    def render(self, model):
+        return """
+        <div style="position: relative; display: flex; align-items: center; justify-content: center;">
+            
+            <!-- Y-axis label (Vertical) -->
+            <div style="position: absolute; left: -140px; top: -500%; transform: rotate(-90deg) translateY(-50%); font-size: 14px;">
+                Number of Users (Infected & Labeled)
+            </div>
+            
+            <div style="text-align: center; margin-top: 10px; font-size: 14px; font-weight;">
+                Simulation Steps
+            </div>
+        </div>
+        """
 
+chart_labels = ChartLabels()  # Create label element
 network_vis = FixedNetworkModule(network_portrayal, 500, 500)
 
 chart = ChartModule([{ "Label": "Infected", "Color": "Red" }, { "Label": "Labeled", "Color": "Blue" }])
 stats = StatsElement()
 legend = LegendElement()
-server = ModularServer(MisinformationModel, [network_vis, chart, stats, legend], "Misinformation Spread Model")
+server = ModularServer(MisinformationModel, [network_vis, chart, chart_labels, stats, legend], "Misinformation Spread Model")
 server.port = server_port  # Assigns a free port dynamically
 
 # Run both the interactive UI and the static visualization
