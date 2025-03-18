@@ -14,6 +14,16 @@ class ContentAgent(Agent):
         self.labeled = False  # Whether the content has been labeled as AI-generated
         self.pos = None  # Will be set when placed on grid
         
+        # Add AI battle attributes
+        if agent_type == "generator":
+            self.effectiveness = 1.0  # Start at full effectiveness
+            self.neutralized = False  # Whether the generator has been neutralized
+            self.evasion_skill = self.random.random() * 0.5  # Chance to evade detection
+        
+        if agent_type == "detector":
+            self.detection_power = 1.0  # Initial detection power
+            self.ai_victories = 0  # Counter for AIs neutralized
+        
     def step(self):
         """Agent's behavior during each step of the simulation."""
         # Skip if position is not set
@@ -21,8 +31,13 @@ class ContentAgent(Agent):
             return
             
         if self.agent_type == "generator":
+            # Skip if neutralized
+            if hasattr(self, 'neutralized') and self.neutralized:
+                return
+                
             # Generators create and spread deepfake content
-            if self.random.random() < self.model.generation_rate:
+            effectiveness_factor = getattr(self, 'effectiveness', 1.0)
+            if self.random.random() < self.model.generation_rate * effectiveness_factor:
                 # Get neighboring nodes
                 try:
                     neighbors = list(self.model.G.neighbors(self.pos))
@@ -41,7 +56,7 @@ class ContentAgent(Agent):
                     print(f"Error in generator step: {e}")
                             
         elif self.agent_type == "detector":
-            # Detectors try to identify and label deepfake content
+            # Detectors try to identify and neutralize generators or label content
             if self.random.random() < self.model.detection_rate:
                 try:
                     # Get neighboring nodes
@@ -51,7 +66,33 @@ class ContentAgent(Agent):
                         target_node = self.random.choice(neighbors)
                         # Get agents at that node
                         cell_agents = self.model.grid.get_cell_list_contents([target_node])
-                        # Label an exposed user if found
+                        
+                        # FIRST PRIORITY: Try to find and neutralize a generator (AI-to-AI interaction)
+                        for agent in cell_agents:
+                            if agent.agent_type == "generator" and hasattr(agent, 'neutralized') and not agent.neutralized:
+                                # Generator may evade detection
+                                if self.random.random() > agent.evasion_skill:
+                                    # Reduce generator effectiveness - DIRECT AI-TO-AI IMPACT
+                                    agent.effectiveness -= 0.2
+                                    print(f"Detector {self.unique_id} found and impacted generator {agent.unique_id}! Generator effectiveness reduced to {agent.effectiveness}")
+                                    
+                                    # Neutralize if effectiveness drops below threshold
+                                    if agent.effectiveness <= 0.4:
+                                        agent.neutralized = True
+                                        self.ai_victories += 1
+                                        print(f"Generator {agent.unique_id} has been neutralized by detector {self.unique_id}!")
+                                        self.model.record_ai_battle(self.unique_id, agent.unique_id, "detector_win")
+                                    else:
+                                        self.model.record_ai_battle(self.unique_id, agent.unique_id, "detector_hit")
+                                else:
+                                    # Generator successfully evaded
+                                    print(f"Generator {agent.unique_id} evaded detection by detector {self.unique_id}!")
+                                    self.model.record_ai_battle(self.unique_id, agent.unique_id, "generator_evaded")
+                                
+                                # End turn after AI-to-AI interaction
+                                return
+                        
+                        # SECOND PRIORITY: Label an exposed user if no generator found
                         for agent in cell_agents:
                             if agent.agent_type == "user" and agent.exposed and not agent.labeled:
                                 if self.random.random() < self.model.detection_accuracy:
@@ -109,6 +150,11 @@ class ContentSpreadModel(Model):
         self.auto_stop_when_all_exposed = auto_stop_when_all_exposed
         self.running = True
         
+        # Track AI battle outcomes
+        self.ai_battles = []
+        self.active_generators = num_generators
+        self.neutralized_generators = 0
+        
         # Create schedule for agent activation
         self.schedule = RandomActivation(self)
         
@@ -162,13 +208,29 @@ class ContentSpreadModel(Model):
             model_reporters={
                 "Unexposed": lambda m: self.count_unexposed(),  # BLUE line in chart
                 "Exposed": lambda m: self.count_exposed(),      # RED line in chart
-                "Labeled": lambda m: self.count_labeled()       # GREY line in chart
+                "Labeled": lambda m: self.count_labeled(),      # GREY line in chart
+                "ActiveGenerators": lambda m: self.count_active_generators(),  # Track active generators
+                "NeutralizedGenerators": lambda m: self.count_neutralized_generators()  # Track neutralized generators
             }
         )
         
         # Collect initial data
         self.datacollector.collect(self)
         print(f"Model initialized with {self.num_users} users, {self.num_generators} generators, and {self.num_detectors} detectors")
+        
+    def record_ai_battle(self, detector_id, generator_id, outcome):
+        """Record an AI battle outcome for tracking."""
+        self.ai_battles.append({
+            "step": self.schedule.steps,
+            "detector_id": detector_id,
+            "generator_id": generator_id,
+            "outcome": outcome
+        })
+        
+        # Update active/neutralized generator counts
+        if outcome == "detector_win":
+            self.active_generators -= 1
+            self.neutralized_generators += 1
         
     def step(self):
         """Advance the model by one step."""
@@ -180,7 +242,10 @@ class ContentSpreadModel(Model):
         unexposed = self.count_unexposed()
         exposed = self.count_exposed()
         labeled = self.count_labeled()
+        active_gens = self.count_active_generators()
+        neutralized_gens = self.count_neutralized_generators()
         print(f"Unexposed: {unexposed}, Exposed: {exposed}, Labeled: {labeled}")
+        print(f"AI Battle Status: {active_gens} active generators, {neutralized_gens} neutralized generators")
         
         # Check stopping conditions
         should_stop = False
@@ -196,10 +261,17 @@ class ContentSpreadModel(Model):
             should_stop = True
             stop_reason = "All users have been exposed or labeled."
         
+        # Stop if all generators are neutralized
+        if active_gens == 0:
+            should_stop = True
+            stop_reason = "All generator AIs have been neutralized by detector AIs."
+        
         if should_stop:
             self.running = False
             print(f"Simulation stopped after {self.schedule.steps} steps.")
             print(stop_reason)
+            # Print AI battle summary
+            print(f"AI BATTLE SUMMARY: {neutralized_gens}/{self.num_generators} generators neutralized by detectors")
         
     def count_unexposed(self):
         """Count number of unexposed users."""
@@ -214,4 +286,17 @@ class ContentSpreadModel(Model):
     def count_labeled(self):
         """Count number of users with labeled content."""
         return sum(1 for agent in self.schedule.agents 
-                  if agent.agent_type == "user" and agent.labeled) 
+                  if agent.agent_type == "user" and agent.labeled)
+                  
+    def count_active_generators(self):
+        """Count number of active generator AIs."""
+        return sum(1 for agent in self.schedule.agents 
+                  if agent.agent_type == "generator" and not getattr(agent, 'neutralized', False))
+    
+    def count_neutralized_generators(self):
+        """Count number of neutralized generator AIs."""
+        return sum(1 for agent in self.schedule.agents 
+                  if agent.agent_type == "generator" and getattr(agent, 'neutralized', False))
+
+# Add an alias for the model class that matches what run.py is trying to import
+DeepfakeModel = ContentSpreadModel 
