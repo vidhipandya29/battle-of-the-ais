@@ -46,7 +46,7 @@ pip install -r requirements.txt
 
 3.  Run the Simulation:   
     ```bash
-    python battle_of_the_ais_simulation.py
+    python server.py
     ```
     After execution, the simulation will start and open a web interface automatically in the browser at:
      ```
