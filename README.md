@@ -1,97 +1,130 @@
-# Misinformation Spread Simulation
+# Battle of the AIs: Deepfake Content Spread Simulation
 
-## **§A. Overview of the Current Implementation State**
-This interim prototype models misinformation spread across social media networks using an agent-based simulation built with the Mesa framework. The model comprises UserAgent objects representing various user roles, including susceptible, spreader, fact-checker, influencer, and skeptical agents. Each agent interacts within a network generated either as a small-world or random network. Current agent interactions simulate misinformation spread and labeling based on fixed probabilities. The simulation collects data on infected and labeled content and calculates precision, recall, and F1-score metrics for fact-checking effectiveness. Visualization includes real-time statistics and network graph portrayals showing infection spread and labeling activity.
+This project simulates the spread of AI-generated content (deepfakes) in a social network, along with the dynamics between content generators and detectors. It's implemented using the Mesa agent-based modeling framework.
 
-### **Key Features Implemented:**
-- **Agent-Based Modeling (ABM)**: Users are classified into five roles: 
-  - **Spreader** 🔴 (actively spreading misinformation)
-  - **Fact Checker** 🔵 (labeling AI-generated content)
-  - **Influencer** 🟠 (amplifying misinformation)
-  - **Skeptical** 🟣 (questioning misinformation but still susceptible)
-  - **Susceptible** ⚫ (neutral users)
-- **Network Structure**: 
-  - Agents interact on a **Small-World** or **Erdős–Rényi** graph to simulate realistic connections.
-- **Agent Interactions**:
-  - Spreaders and influencers increase misinformation spread.
-  - Fact-checkers label misinformation, reducing its impact.
-  - Skeptical users sometimes ignore fact-checks.
-- **Data Collection & Visualization**:
-  - **Live visualization** of misinformation spread.
-  - **Line graph tracking** infected and labeled content over time.
-  - **Legend & stats panel** to track simulation progress.
-- **Simulation Controls**:
-  - Model runs until misinformation reaches equilibrium (no further spread).
-  - Stopping condition when **no new infections or fact-checking occurs**.
+## Features
 
----
+- Simulates a social network with three types of agents:
+  - Regular users who can be exposed to and spread content
+  - Content generators who create and spread deepfake content
+  - Content detectors who try to identify and label AI-generated content
+- Interactive visualization showing the network structure and agent states
+- Real-time charts tracking the spread of content
+- Adjustable parameters to experiment with different scenarios
 
-## **§B. How to Run the Simulation**
-### **1. Install Dependencies**
-Ensure you have Python installed (preferably Python 3.9+).  
-Run the following command to install the required dependencies:
-```bash
-pip install -r requirements.txt
-```
-### **2. Running the Simulation**
-1.  Clone the repository.
+## Running the Simulation
+1. Make sure you have Python 3.8 or higher installed
+
+2. Clone the repository.
     ```bash
     git clone https://github.com/vidhipandya29 battle-of-the-ais.git
     ```
-
-2.  Navigate to the project directory.
+3. Install the required packages:
     ```bash
-    cd battle-of-the-ais/src
+    pip install -r requirements.txt
     ```
 
-3.  Run the Simulation:   
+4. Navigate to the src directory:
+    ```bash
+    cd src
+    ```
+
+5. Run the server:
     ```bash
     python server.py
     ```
-    After execution, the simulation will start and open a web interface automatically in the browser at:
-     ```
-    http://127.0.0.1:[PORT]
+
+6. Open your web browser and go to:
     ```
-  
-    The port is dynamically assigned.
+    http://localhost:8521
+    ```
 
-4.  After the simulation completes, a CSV file named `misinformation_simulation_results.csv` containing the collected simulation data will be generated in your current directory.
-    
-### Controls
+## Parameters
 
-*   **Start:** The simulation runs automatically.
-    
-*   **Stop:** Manually stops the simulation.
-    
-*   **Step:** Advances the simulation one step at a time.
-    
-*   **Reset:** Restarts the simulation.
-    
----
+You can adjust the following parameters in the web interface:
 
-## **§C. Limitations and Planned Improvements**
+- Number of Users: Total number of regular users in the network
+- Number of Content Generators: Number of agents creating deepfake content
+- Number of Content Detectors: Number of agents trying to identify AI content
+- Content Generation Rate: How frequently new content is created
+- Detection Rate: How often detectors check content
+- Detection Accuracy: How accurate the detectors are
+- Content Spread Rate: How quickly content spreads between users
 
-### Current Limitations
+## Visualization
 
-*   The model does not differentiate between human and bot interactions, limiting realism.
-    
-*   Misinformation spread currently uses fixed probabilities, which does not fully capture viral dynamics or feed algorithm effects.
-    
-*   Users have limited ability to dynamically adjust parameters during simulation runs.
-    
-*   Visualization lacks detailed differentiation between types of agents and strength of connections.
-    
-*   Data collection currently focuses only on infection and labeling without broader content dynamics analysis.
-    
+The visualization includes:
+- Network view showing agents and their connections
+- Color coding:
+  - Blue: Unexposed users
+  - Red: Content generators and exposed users
+  - Green: Content detectors
+  - Grey: Users with labeled content
+- Charts tracking the population of unexposed, exposed, and labeled users
+- AI to AI interaction visualization showing the dynamic between generator and detector AIs
+- Dashboard displaying key metrics:
+  - Active and neutralized generators
+  - Active detectors and their success rates
+  - User exposure statistics
+- Optimized layout with:
+  - Parameter sliders on the left
+  - Network visualization in the center
+  - Status dashboard on the right
+  - Charts at the bottom
 
-### Planned Improvements for Next Phase
+## Project Structure
 
-*   Introduce bot-specific behaviors for misinformation and fact-checking agents to differentiate from human interactions.
-    
-*   Implement a realistic feed algorithm to model content spread based on engagement and virality.
-    
-*   Add interactive UI sliders to dynamically adjust simulation parameters, including misinformation spread probability, fact-checking effectiveness, and bot-to-human ratios.
-    
-*   Enhance visualization by clearly distinguishing bot agents, applying weighted edges to represent misinformation strength, and using distinctive node representations.
-    
-*   Expand data collection to include misinformation saturation metrics, providing deeper analytical insights into content dynamics over simulation steps.
+```
+src/
+├── model.py          # Core simulation model
+├── visualization.py  # Visualization settings
+└── server.py        # Server to run the simulation
+```
+
+## Overview of Current Implementation State
+
+This is a partial functional prototype that simulates the interaction between AI-generated deepfake content and detection systems on social media platforms, with a focus on user behavior and content labeling. The simulation models:
+
+- Social media users who can interact with and spread content
+- AI content generators that create and spread deepfake content
+- AI detectors that identify and label AI-generated content
+- Network-based interactions between these agents
+- Visualization of content spread and labeling effectiveness
+
+The current implementation includes:
+- Basic agent interactions in a network structure
+- Content generation and spread mechanics
+- Detection and labeling system
+- Real-time visualization of the network state
+- Data collection for analyzing spread patterns
+
+### Interpreting the Visualization
+- Blue nodes: Unexposed users
+- Red nodes: Users exposed to unlabeled AI content
+- Grey nodes: Users exposed to labeled AI content
+- Large red nodes: Content generators
+- Large green nodes: Content detectors
+- The graph shows the real-time counts of unexposed, exposed, and labeled users
+- The AI Battle Dashboard displays generator and detector performance metrics
+- Charts track both user state distribution and AI effectiveness over time
+
+## Limitations and Planned Improvements
+
+Current limitations:
+1. Simple interaction model between users
+2. Basic content spread mechanics
+3. Limited user engagement metrics
+
+Planned improvements:
+1. Enhanced user behavior modeling:
+   - Add likes, comments, and shares as distinct interactions
+   - Implement user credibility scores
+2. Improved content detection:
+   - Add detection delay mechanics
+   - Implement false positive/negative rates
+3. Advanced analytics:
+   - Track content virality metrics
+   - Measure effectiveness of labeling strategies
+4. UI/UX enhancements:
+   - Add more detailed node information
+   - Implement timeline visualization 
