@@ -1,16 +1,16 @@
 # Battle of the AIs: Deepfake Content Spread Simulation
 
-This project simulates the spread of AI-generated content (deepfakes) in a social network, along with the dynamics between content generators and detectors. It's implemented using the Mesa agent-based modeling framework.
+This project simulates the spread of AI-generated content (deepfakes) in a social network, along with the dynamics between content generators and detectors. It's implemented using the Mesa agent-based modeling framework and adapted from Mesa's virus spread example.
 
 ## Features
 
-- Simulates a social network with three types of agents:
-  - Regular users who can be exposed to and spread content
-  - Content generators who create and spread deepfake content
-  - Content detectors who try to identify and label AI-generated content
+- Simulates a social network with agents in different states:
+  - Susceptible: Users who have viewed but not interacted with AI content (green line in chart)
+  - Infected: Users who have interacted with AI content (red line in chart)
+  - Resistant: Users who have viewed labeled AI content (gray line in chart)
 - Interactive visualization showing the network structure and agent states
 - Real-time charts tracking the spread of content
-- Adjustable parameters to experiment with different scenarios
+- Visualization of the simulation over time with step controls
 
 ## Running the Simulation
 1. Make sure you have Python 3.8 or higher installed
@@ -31,100 +31,88 @@ This project simulates the spread of AI-generated content (deepfakes) in a socia
 
 5. Run the server:
     ```bash
-    python server.py
+    solara run app.py
     ```
 
 6. Open your web browser and go to:
     ```
-    http://localhost:8521
+    http://localhost:8765
     ```
 
-## Parameters
+## Controls
 
-You can adjust the following parameters in the web interface:
-
-- Number of Users: Total number of regular users in the network
-- Number of Content Generators: Number of agents creating deepfake content
-- Number of Content Detectors: Number of agents trying to identify AI content
-- Content Generation Rate: How frequently new content is created
-- Detection Rate: How often detectors check content
-- Detection Accuracy: How accurate the detectors are
-- Content Spread Rate: How quickly content spreads between users
+The simulation interface includes:
+- Play Interval (ms): Control simulation speed
+- Render Interval (steps): Control visualization update frequency
+- Reset: Reset the simulation to initial state
+- Play/Pause: Start or pause the simulation
+- Step: Advance the simulation by one step
 
 ## Visualization
 
 The visualization includes:
 - Network view showing agents and their connections
 - Color coding:
-  - Blue: Unexposed users
-  - Red: Content generators and exposed users
-  - Green: Content detectors
-  - Grey: Users with labeled content
-- Charts tracking the population of unexposed, exposed, and labeled users
-- AI to AI interaction visualization showing the dynamic between generator and detector AIs
-- Dashboard displaying key metrics:
-  - Active and neutralized generators
-  - Active detectors and their success rates
-  - User exposure statistics
-- Optimized layout with:
-  - Parameter sliders on the left
-  - Network visualization in the center
-  - Status dashboard on the right
-  - Charts at the bottom
+  - Green: Susceptible users (viewed but not interacted with AI content)
+  - Red: Infected users (interacted with AI content) and content generators
+  - Gray: Resistant users (viewed labeled AI content)
+- Chart tracking the population changes over time:
+  - Green line: Users who have viewed AI content
+  - Red line: Users who have interacted with AI content
+  - Gray line: Users who have viewed labeled AI content
+- Status display showing:
+  - Current step number
+  - Resistant/Susceptible Ratio
+  - Infected Remaining count
 
 ## Project Structure
 
 ```
 src/
-├── model.py          # Core simulation model
-├── visualization.py  # Visualization settings
-└── server.py        # Server to run the simulation
+├── agents.py       # Agent definitions and behaviors
+├── model.py        # Core simulation model
+└── app.py          # Solara visualization app
+
 ```
 
-## Overview of Current Implementation State
+## Model Details
 
-This is a partial functional prototype that simulates the interaction between AI-generated deepfake content and detection systems on social media platforms, with a focus on user behavior and content labeling. The simulation models:
+The simulation is based on a modified SIR (Susceptible-Infected-Resistant) model:
 
-- Social media users who can interact with and spread content
-- AI content generators that create and spread deepfake content
-- AI detectors that identify and label AI-generated content
-- Network-based interactions between these agents
-- Visualization of content spread and labeling effectiveness
+- **Agents (VirusAgent)**: Represent social media users with the following behaviors:
+  - Can be exposed to AI content (transition from Susceptible to Infected)
+  - Can spread content to neighbors based on content spread chance
+  - Can detect AI content based on check frequency
+  - Can gain resistance after exposure (labeled content awareness)
 
-The current implementation includes:
-- Basic agent interactions in a network structure
-- Content generation and spread mechanics
-- Detection and labeling system
-- Real-time visualization of the network state
-- Data collection for analyzing spread patterns
+- **Network**: Erdős–Rényi random graph with configurable node count and connectivity
 
-### Interpreting the Visualization
-- Blue nodes: Unexposed users
-- Red nodes: Users exposed to unlabeled AI content
-- Grey nodes: Users exposed to labeled AI content
-- Large red nodes: Content generators
-- Large green nodes: Content detectors
-- The graph shows the real-time counts of unexposed, exposed, and labeled users
-- The AI Battle Dashboard displays generator and detector performance metrics
-- Charts track both user state distribution and AI effectiveness over time
+- **Parameters**:
+  - `virus_spread_chance`: Probability of content spreading to neighbors (0.37 default)
+  - `virus_check_frequency`: Frequency of content checking (0.5 default)
+  - `recovery_chance`: Probability of recovery from infection (0.3 default)
+  - `gain_resistance_chance`: Probability of gaining resistance (0.5 default)
 
-## Limitations and Planned Improvements
+## Understanding the Metrics
 
-Current limitations:
-1. Simple interaction model between users
-2. Basic content spread mechanics
-3. Limited user engagement metrics
+- **Resistant/Susceptible Ratio**: Measures the proportion of users who have viewed labeled content versus those who have only viewed unlabeled content. Higher values indicate more effective detection and labeling.
 
-Planned improvements:
-1. Enhanced user behavior modeling:
-   - Add likes, comments, and shares as distinct interactions
-   - Implement user credibility scores
-2. Improved content detection:
-   - Add detection delay mechanics
-   - Implement false positive/negative rates
-3. Advanced analytics:
-   - Track content virality metrics
-   - Measure effectiveness of labeling strategies
-4. UI/UX enhancements:
-   - Add more detailed node information
-   - Implement timeline visualization 
+- **Infected Remaining**: Shows the current number of users interacting with and spreading AI content.
+
+## Future Improvements
+
+Planned enhancements:
+1. Custom agent parameters for more realistic behaviors
+2. Improved visualization with agent property inspection
+3. Incorporation of another Mesa example to show user interactions in detail and how they result in the growth of posts
+4. Adding more model parameters to make the visualization more interactive
+5. Implementing multiple agent types (content generators, detectors, regular users) as separate classes with distinct behaviors and interaction patterns
+
+## Challenges
+
+During development, we encountered several challenges:
+
+1. Difficulty in altering code specific to the Mesa library, especially when adapting the virus example to our content spread model
+2. Implementing custom agent behaviors while maintaining compatibility with Mesa's framework
+3. Balancing simulation complexity with performance considerations
+4. Integrating Solara visualization components with Mesa's agent-based modeling
