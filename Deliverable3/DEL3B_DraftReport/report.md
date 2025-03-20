@@ -2,7 +2,7 @@
 
 ```
 Names : Leonel DE AMORIM, Christina PIANG SANG, Vidhi PANDYA
-GitHub Link : [https://github.com/vidhipandya29/battle-of-the-ais](https://github.com/vidhipandya29/battle-of-the-ais) 
+GitHub Link : https://github.com/vidhipandya29/battle-of-the-ais
 ```
 ## Phenomenon Overview
 
