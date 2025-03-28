@@ -35,9 +35,9 @@ def get_resistant_susceptible_ratio(model):
 model_params = {
     "num_nodes": {
         "type": "SliderInt",
-        "value": 100,
-        "min": 50,
-        "max": 500,
+        "value": 10,
+        "min": 2,
+        "max": 100,
         "step": 10,
         "label": "Number of Nodes",
     },
@@ -124,7 +124,7 @@ page = SolaraViz(
         StatePlot,
         get_resistant_susceptible_ratio,
     ],
-    model_params=model_params, 
+    model_params=model_params,
     name="Battle of the AIs",
 )
 page  # noqa
