@@ -33,18 +33,62 @@ def get_resistant_susceptible_ratio(model):
 
 # Fixed parameters
 model_params = {
-    # "seed": {
-    #     "type": "InputText",
-    #     "value": 60,
-    #     "label": "Random Seed",
-    # },
-    "num_nodes": 100,
-    "avg_node_degree": 3,  
-    "initial_outbreak_size": 1,
-    "virus_spread_chance": 0.37,
-    "virus_check_frequency": 0.5, 
-    "recovery_chance": 0.3,  
-    "gain_resistance_chance": 0.5, 
+    "num_nodes": {
+        "type": "SliderInt",
+        "value": 100,
+        "min": 50,
+        "max": 500,
+        "step": 10,
+        "label": "Number of Nodes",
+    },
+    "avg_node_degree": {
+        "type": "SliderInt",
+        "value": 3,
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "label": "Average Node Degree",
+    },
+    "initial_outbreak_size": {
+        "type": "SliderInt",
+        "value": 1,
+        "min": 1,
+        "max": 50,
+        "step": 1,
+        "label": "Initial Outbreak Size",
+    },
+    "virus_spread_chance": {
+        "type": "SliderFloat",
+        "value": 0.37,
+        "min": 0.01,
+        "max": 1.0,
+        "step": 0.01,
+        "label": "Virus Spread Chance",
+    },
+    "virus_check_frequency": {
+        "type": "SliderFloat",
+        "value": 0.5,
+        "min": 0.01,
+        "max": 1.0,
+        "step": 0.01,
+        "label": "AI Detection Frequency",
+    },
+    "recovery_chance": {
+        "type": "SliderFloat",
+        "value": 0.3,
+        "min": 0.01,
+        "max": 1.0,
+        "step": 0.01,
+        "label": "Recovery Chance",
+    },
+    "gain_resistance_chance": {
+        "type": "SliderFloat",
+        "value": 0.5,
+        "min": 0.01,
+        "max": 1.0,
+        "step": 0.01,
+        "label": "Resistance Gain Chance",
+    },
 }
 
 
