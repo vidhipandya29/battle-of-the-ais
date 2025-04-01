@@ -1,6 +1,8 @@
 # Battle of the AIs: Deepfake Content Spread Simulation
 
-This project simulates the spread of AI-generated content (deepfakes) in a social network, along with the dynamics between content generators and detectors. It's implemented using the Mesa agent-based modeling framework and adapted from Mesa's virus spread example.
+## Overview of the Phenomenon
+
+Our phenomenon of interest is the spread and detection of AI-generated deepfake content on social media platforms like Instagram and Meta, with a particular focus on labeling such content and its impact. We aim to investigate if labeling AI-generated deepfake images affects its spread and whether labeling influences user behavior and interactions.
 
 ## Features
 
@@ -99,20 +101,27 @@ The simulation is based on a modified SIR (Susceptible-Infected-Resistant) model
 
 - **Infected Remaining**: Shows the current number of users interacting with and spreading AI content.
 
-## Future Improvements
+## Key Findings
 
-Planned enhancements:
-1. Custom agent parameters for more realistic behaviors
-2. Improved visualization with agent property inspection
-3. Incorporation of another Mesa example to show user interactions in detail and how they result in the growth of posts
-4. Adding more model parameters to make the visualization more interactive
-5. Implementing multiple agent types (content generators, detectors, regular users) as separate classes with distinct behaviors and interaction patterns
+- **Labeling Reduces Engagement Over Time**  
+  Users exposed to labeled AI-generated content are more likely to disengage, reducing the overall spread.
 
-## Challenges
+- **Unlabeled AI Content Spreads Rapidly**  
+  When AI-generated content is not labeled, engagement rates remain high, resembling viral content spread.
 
-During development, we encountered several challenges:
+- **Influence of Resistant Users**  
+  The presence of resistant users significantly reduces the likelihood of new users engaging with AI content.
 
-1. Difficulty in altering code specific to the Mesa library, especially when adapting the virus example to our content spread model
-2. Implementing custom agent behaviors while maintaining compatibility with Mesa's framework
-3. Balancing simulation complexity with performance considerations
-4. Integrating Solara visualization components with Mesa's agent-based modeling
+- **Detection Accuracy & Delay**  
+  - If detection models have low accuracy, content can spread more widely.
+  - Labeling delay causes content to rapidly spread early in the outbreak, playing a key role in how far the content can spread before detection takes effect.
+
+- **Social Influence**  
+  Users are less likely to interact with AI content if their surrounding network does not engage with it.
+
+- **Policy Improvements**  
+  The findings suggest that social media platforms should prioritize accurate AI detection and implement clear content labeling to mitigate misinformation spread.
+
+## Conclusion
+
+This simulation serves as a tool to analyze the dynamic interactions between AI detection accuracy, labeling strategies, and user behavior in the spread of AI-generated content on social media. By adjusting detection thresholds, labeling latencies, and user engagement parameters, one can study how rapidly deepfake content propagates and evaluate the effectiveness of labeling policies in real-world scenarios.
