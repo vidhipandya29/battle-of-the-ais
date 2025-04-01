@@ -6,6 +6,7 @@ from mesa.examples.basic.virus_on_network.model import (
     number_infected
 )
 from mesa.visualization import (
+    Slider,
     SolaraViz,
     make_plot_component,
     make_space_component,
@@ -33,62 +34,74 @@ def get_resistant_susceptible_ratio(model):
 
 # Fixed parameters
 model_params = {
-    "num_nodes": {
-        "type": "SliderInt",
-        "value": 10,
-        "min": 2,
-        "max": 100,
-        "step": 10,
-        "label": "Number of Nodes",
+    "seed": {
+        "type": "InputText",
+        "value": 42,
+        "label": "Random Seed",
     },
-    "avg_node_degree": {
-        "type": "SliderInt",
-        "value": 3,
-        "min": 1,
-        "max": 10,
-        "step": 1,
-        "label": "Average Node Degree",
-    },
-    "initial_outbreak_size": {
-        "type": "SliderInt",
-        "value": 1,
-        "min": 1,
-        "max": 50,
-        "step": 1,
-        "label": "Initial Outbreak Size",
-    },
-    "virus_spread_chance": {
-        "type": "SliderFloat",
-        "value": 0.37,
-        "min": 0.01,
-        "max": 1.0,
-        "step": 0.01,
-        "label": "Virus Spread Chance",
-    },
-    "virus_check_frequency": {
-        "type": "SliderFloat",
-        "value": 0.5,
-        "min": 0.01,
-        "max": 1.0,
-        "step": 0.01,
-        "label": "AI Detection Frequency",
-    },
-    "recovery_chance": {
-        "type": "SliderFloat",
-        "value": 0.3,
-        "min": 0.01,
-        "max": 1.0,
-        "step": 0.01,
-        "label": "Recovery Chance",
-    },
-    "gain_resistance_chance": {
-        "type": "SliderFloat",
-        "value": 0.5,
-        "min": 0.01,
-        "max": 1.0,
-        "step": 0.01,
-        "label": "Resistance Gain Chance",
-    },
+    "num_nodes": Slider(
+        label="Number of agents",
+        value=10,
+        min=10,
+        max=100,
+        step=1,
+    ),
+    "avg_node_degree": Slider(
+        label="Average Node Degree",
+        value=3,
+        min=1,
+        max=10,
+        step=1,
+    ),
+    "initial_outbreak_size": Slider(
+        label="Initial Outbreak Size",
+        value=1,
+        min=1,
+        max=50,
+        step=1,
+    ),
+    "virus_spread_chance": Slider(
+        label="Virus Spread Chance",
+        value=0.37,
+        min=0.01,
+        max=1.0,
+        step=0.01,
+    ),
+    "virus_check_frequency": Slider(
+        label="AI Detection Frequency",
+        value=0.5,
+        min=0.01,
+        max=1.0,
+        step=0.01,
+    ),
+    "recovery_chance": Slider(
+        label="Recovery Chance",
+        value=0.3,
+        min=0.01,
+        max=1.0,
+        step=0.01,
+    ),
+    "gain_resistance_chance": Slider(
+        label="Resistance Gain Chance",
+        value=0.5,
+        min=0.01,
+        max=1.0,
+        step=0.01,
+    ),
+    # "resistance_loss_threshold": Slider(
+    #     label="Resistance Loss Threshold",
+    #     value=2,
+    #     min=1.0,
+    #     max=4.0,
+    #     step=0.01,
+    # ),
+    # "decrease_resistance_chance": Slider(
+    #     label="Decrease Resistance Chance",
+    #     value=0.5,
+    #     min=0.01,
+    #     max=1.0,
+    #     step=0.01,
+    # ),
 }
 
 
@@ -114,8 +127,8 @@ StatePlot = make_plot_component(
     post_process=post_process_lineplot,
 )
 
-# Initialize the model with the fixed parameters
 model1 = VirusOnNetwork()
+
 
 page = SolaraViz(
     model1,

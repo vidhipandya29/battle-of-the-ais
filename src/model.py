@@ -3,7 +3,6 @@ import math
 
 import networkx as nx
 
-
 import mesa
 from mesa import Model
 from mesa.discrete_space import CellCollection, Network
@@ -29,27 +28,21 @@ class VirusOnNetwork(Model):
 
    def __init__(
        self,
+       num_nodes=100,
+       avg_node_degree=3,
+       initial_outbreak_size=30,
+       virus_spread_chance=0.37,
+       virus_check_frequency=0.5,
+       recovery_chance=0.3,
+       gain_resistance_chance=0.5,
+    #    resistance_loss_threshold = 2,
+    #    decrease_resistance_chance = 0.7,
+       seed=None,
    ):
        super().__init__(seed=seed)
-    
-
-       num_nodes=100 
-       avg_node_degree=3
-       initial_outbreak_size=1
-       virus_spread_chance=0.37
-       virus_check_frequency=0.5
-       recovery_chance=0.3
-       gain_resistance_chance=0.5
-
-       seed=None,
        prob = avg_node_degree / num_nodes
-       
-       graph = nx.erdos_renyi_graph(n=100, p=prob)
+       graph = nx.erdos_renyi_graph(n=num_nodes, p=prob)
        self.grid = Network(graph, capacity=1, random=self.random)
-
-
-       self.initial_outbreak_size = 30
-
 
        self.datacollector = mesa.DataCollector(
            {
@@ -69,6 +62,8 @@ class VirusOnNetwork(Model):
            virus_check_frequency,
            recovery_chance,
            gain_resistance_chance,
+        #    resistance_loss_threshold,
+        #    decrease_resistance_chance,
            list(self.grid.all_cells),
        )
 
